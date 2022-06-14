@@ -94,4 +94,4 @@ userId2|string|true|ユーザID2
  -- | -- | -- | --
 offlineConnections|array|true|オフラインのつながりの配列（47×47）
 onlineConnections|array|true|オンラインのつながりの配列（47×47）
-> connection[i][j]はprefectureIdがiとjのつながりの個数を表している
+> Connection[i][j]はprefectureIdがiとjのつながりの個数を表している
