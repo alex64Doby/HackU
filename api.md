@@ -1,8 +1,9 @@
 ## API一覧
 説明|メゾット|エンドポイント
-ユーザ登録 | POST |Signup
-つながり登録 | POST |Connection
-一覧表示 | GET |all
+ -- | -- | -- 
+ユーザ登録 | POST |/Signup
+つながり登録 | POST |/Connection
+一覧表示 | GET |/All
 
 ## 各APIの仕様
 
