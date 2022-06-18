@@ -27,7 +27,7 @@
  -- | -- | -- | --
 userId|string|true|ユーザID
 userName|string|true|ユーザの名前
-prefectureId|string|true|都道府県ID
+prefectureId|number|true|都道府県ID
 
 **レスポンス200応答**
 ```
