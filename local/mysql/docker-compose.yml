@@ -2,6 +2,7 @@ version: '3'
 
 services:
   mysql:
+    platform: 'linux/amd64'
     container_name: mysql
     build: ./
     hostname: mysql
