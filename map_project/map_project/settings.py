@@ -74,9 +74,10 @@ WSGI_APPLICATION = 'map_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+import pymysql
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': 'DB',
         'USER': 'team8',
         'PASSWORD': 'team8',
@@ -85,7 +86,8 @@ DATABASES = {
 
     }
 }
-
+pymysql.version_info = (1, 4, 2, "final", 0)
+pymysql.install_as_MySQLdb()
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
