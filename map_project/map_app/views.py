@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 # Create your views here.
+from .models import Users
 
 #API:all
 def all(request):
@@ -9,18 +10,13 @@ def all(request):
 
 #API:signup
 def signup(request):
-	request = {
-   "userId": "testId2",
-   "userName": "testName",
-   "prefectureId": 0,
-}
-	userid = request["userId"]
-	userName = request["userName"]
-	prefectureid = request["prefectureId"]
-	# result =  'signup'
-	from .models import Users
-	Users.objects.create(user_id=userid, user_name=userName, prefecture_id=prefectureid)
-	result = Users.objects.all()
+	try:
+		Users.objects.get(user_id=request["userId"])
+		result = {"status": 400}
+	except:
+		Users.objects.create(user_id=request["userId"],
+			user_name=request["userName"], prefecture_id=request["prefectureId"])
+		result = {"status": 200}
 	return HttpResponse(result)
 
 #API:connection
