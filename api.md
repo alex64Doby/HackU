@@ -10,8 +10,8 @@
 ユーザ登録 | POST |/Signup
 つながり登録 | POST |/Connection
 一覧表示 | GET |/All
-都道府県ごと表示 | POST | /byPrefecture
-ユーザごと表示 | POST| /byUser
+都道府県ごと表示 | POST | /UserbyPrefecture
+ユーザごと表示 | POST| /ConnectionbyUser
 
 
 ## 各APIの仕様
