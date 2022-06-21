@@ -3,3 +3,8 @@
 *.pyc
 map_project/.DS_Store
 map_project/__pycache__
+*.pyc
+*.pyc
+local/.DS_Store
+local/mysql/.DS_Store
+.DS_Store

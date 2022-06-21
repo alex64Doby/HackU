@@ -22,10 +22,12 @@ def all(request):
 	for id1, id2 in offline_pid:
 		offline_connections[id1][id2] += 1
 	for id1, id2 in online_pid:
-		online_connections[id1][id2] += 1	
+		online_connections[id1][id2] += 1
 	response = {"offline_connections": offline_connections, "online_connections": online_connections}
-	json_response = json.dumps(response, ensure_ascii=False, indent=2) 
+	json_response = json.dumps(response, ensure_ascii=False, indent=2)
 	return HttpResponse(json_response)
+
+
 #API:signup
 def signup(request):
 	try:
@@ -35,14 +37,15 @@ def signup(request):
 		Users.objects.create(user_id=request["userId"],
 			user_name=request["userName"], prefecture_id=request["prefectureId"])
 		result = {"status": 200}
-	return HttpResponse(result)
+	return HttpResponse(json.dumps(result))
+
 
 #API:connection
 #既に繋がっている人の処理を考える
 def connection(request):
 	request = {
 		"userId1":"user_id3",
-		"userId2":"user_id4", 
+		"userId2":"user_id4",
 		"status":"status",
 	}
 	userId1 = request["userId1"]
