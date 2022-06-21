@@ -31,11 +31,11 @@ def all(request):
 #API:signup
 def signup(request):
 	try:
-		Users.objects.get(user_id=request["userId"])
+		Users.objects.get(user_id=request.POST["userId"])
 		result = {"status": 400}
 	except:
-		Users.objects.create(user_id=request["userId"],
-			user_name=request["userName"], prefecture_id=request["prefectureId"])
+		Users.objects.create(user_id=request.POST["userId"],
+			user_name=request.POST["userName"], prefecture_id=request.POST["prefectureId"])
 		result = {"status": 200}
 	return HttpResponse(json.dumps(result))
 
