@@ -40,27 +40,31 @@ def signup(request):
 		result = {'status': 200}
 	return HttpResponse(json.dumps(result))
 
-
+#API:connection
 #既に繋がっている人の処理を考える
 def connection(request):
 	from .models import Connections,Users
 	request = json.loads(request.body)
-	userId1 = request["userId1"]
-	userId2 = request["userId2"]
-	status = request["status"]
-	
-	Connections.objects.get(
-		user_id1 = userId1,
-		user_id2 = userId2,
-		status = status,
-	)
-	mkhash = userId1 + userId2
+	UserId1 = request["userId1"]
+	UserId2 = request["userId2"]
+	mkhash = UserId1 + UserId2
 	hs = str(hashlib.md5(mkhash.encode()).hexdigest())
-	Connections.objects.create(user_id1=userId1, user_id2=userId2, status=status, connection_id=hs)
-	# result = Connections.objects.filter(connection_id=hs)
-	result = {"connection_id": hs}
+	# エラーチェック用(既に存在するデータ)
+	# hs = "86cbce9d-b046-4c12-bb5a-b90ba73c"
+	try:
+		Connections.objects.get(connection_id=hs)
+		result = {"status": 400}
+	except:
+		# エラー発生中(1行目と2~3行目は同じ処理内容)
+		# Connections.objects.create(connection_id=hs ,user_id1=request["userId1"] ,user_id2=request["userId2"],status=request["status"])
+		# SaveData = Connections(connection_id=hs ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
+		# SaveData.save()
+		result = {
+		"connection_id": hs,
+		"userId1": UserId1,
+		"userId2": UserId2,
+		}
 	return HttpResponse(json.dumps(result))
-
 
 #API:userByPrefecture
 #都道府県ごとのユーザ情報を表示
