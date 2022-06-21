@@ -41,23 +41,26 @@ def signup(request):
 	return HttpResponse(json.dumps(result))
 
 
-#API:connection
 #既に繋がっている人の処理を考える
 def connection(request):
-	request = {
-		"userId1":"user_id3",
-		"userId2":"user_id4",
-		"status":"status",
-	}
+	from .models import Connections,Users
+	request = json.loads(request.body)
 	userId1 = request["userId1"]
 	userId2 = request["userId2"]
 	status = request["status"]
+	
+	Connections.objects.get(
+		user_id1 = userId1,
+		user_id2 = userId2,
+		status = status,
+	)
 	mkhash = userId1 + userId2
 	hs = str(hashlib.md5(mkhash.encode()).hexdigest())
-	from .models import Connections
 	Connections.objects.create(user_id1=userId1, user_id2=userId2, status=status, connection_id=hs)
-	result = Connections.objects.filter(connection_id=hs)
-	return HttpResponse(result)
+	# result = Connections.objects.filter(connection_id=hs)
+	result = {"connection_id": hs}
+	return HttpResponse(json.dumps(result))
+
 
 #API:userByPrefecture
 #都道府県ごとのユーザ情報を表示
