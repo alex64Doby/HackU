@@ -8,3 +8,4 @@ map_project/__pycache__
 local/.DS_Store
 local/mysql/.DS_Store
 .DS_Store
+*.pyc
