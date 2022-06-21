@@ -1,10 +1,9 @@
 from django.db import models
 
-
 class Connections(models.Model):
     connection_id = models.CharField(primary_key=True, max_length=48)
-    user_id1 = models.CharField(max_length=48)
-    user_id2 = models.CharField(max_length=48)
+    user_id1 = models.ForeignKey('Users', models.DO_NOTHING, to_field='user_id', db_column='user_id1', related_name='user_id1')
+    user_id2 = models.ForeignKey('Users', models.DO_NOTHING, to_field='user_id',  db_column='user_id2', related_name='user_id2')
     status = models.CharField(max_length=48)
 
     class Meta:
