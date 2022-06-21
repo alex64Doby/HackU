@@ -50,6 +50,7 @@ prefectureId|number|true|都道府県ID
  {
    userId1: userid1,
    userId2: userid2,
+   status:status,
  }
  ```
 
