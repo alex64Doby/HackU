@@ -2,3 +2,4 @@
 *.pyc
 *.pyc
 map_project/.DS_Store
+map_project/__pycache__
