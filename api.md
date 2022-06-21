@@ -1,3 +1,9 @@
+## エンドポイント
+- http://localhost:8000/api/connection
+- http://localhost:8000/api/signup
+- http://localhost:8000/api/all
+
+
 ## API一覧
 説明|メゾット|エンドポイント
  -- | -- | -- 
