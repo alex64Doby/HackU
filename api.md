@@ -172,7 +172,7 @@ userId|string|true|ユーザID
      { userId: userid,
        userName: username,
      },
-    ]
+    ],
    ],
    online_connections_detail:
    [
@@ -183,7 +183,7 @@ userId|string|true|ユーザID
      { userId: userid,
        userName: username,
      },
-    ]
+    ],
    ],
  }
  ```
