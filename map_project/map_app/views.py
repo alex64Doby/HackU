@@ -58,3 +58,12 @@ def connection(request):
 	Connections.objects.create(user_id1=userId1, user_id2=userId2, status=status, connection_id=hs)
 	result = Connections.objects.filter(connection_id=hs)
 	return HttpResponse(result)
+
+#API:userByPrefecture
+#都道府県ごとのユーザ情報を表示
+def userByPrefecture(request):
+	request = json.loads(request.body)
+	prefectureId = request['prefectureId']
+	rows = Users.objects.filter(prefecture_id=prefectureId)
+	response = [{"userId":row.user_id, "userName":row.user_name} for row in rows]
+	return HttpResponse(json.dumps(response))
