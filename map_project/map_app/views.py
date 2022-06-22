@@ -26,7 +26,7 @@ def all(request):
 		offline_connections[id1][id2] += 1
 	for id1, id2 in online_pid:
 		online_connections[id1][id2] += 1
-	
+
 	#各都道府県のユーザ数を求める処理
 	from django.db.models import Count
 	users_num = [0 for i in range(47)]
@@ -52,14 +52,24 @@ def all(request):
 
 #API:signup
 def signup(request):
-	request = json.loads(request.body)
-	try:
-		Users.objects.get(user_id=request['userId'])
+	req = json.loads(request.body)
+	try:	# if exsit same id
+		Users.objects.get(user_id=req['userId'])
 		result = {'status': 400}
-	except:
-		Users.objects.create(user_id=request['userId'],
-			user_name=request['userName'], prefecture_id=request['prefectureId'])
+	except:	# create new user
+		Users.objects.create(user_id=req['userId'],
+			user_name=req['userName'], prefecture_id=req['prefectureId'])
 		result = {'status': 200}
+	return HttpResponse(json.dumps(result))
+
+#API:signin
+def signin(request):
+	req = json.loads(request.body)
+	try:	# if exist userid
+		Users.objects.get(user_id=req['userId'])
+		result = {'status': 200}
+	except:	# userid not found
+		result = {'status': 400}
 	return HttpResponse(json.dumps(result))
 
 #API:connection
@@ -142,7 +152,6 @@ def connectionByUser(request):
 		N = users_num[i]
 		offline_connections[i] /= N
 		online_connections[i] /= N
-		
+
 	response = {"offline_connections":offline_connections, "online_connections":online_connections,  "offline_connections_detail": offline_connections_detail, "online_connections_detail": online_connections_detail}
 	return HttpResponse(json.dumps(response))
-		

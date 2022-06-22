@@ -62,7 +62,6 @@ prefectureId|number|true|都道府県ID
 ```
  {
    userId: userid,
-   passwaord: password,
  }
  ```
 
@@ -73,7 +72,6 @@ prefectureId|number|true|都道府県ID
  フィールド名 | 型 | 必須 | 説明
  -- | -- | -- | --
 userId|string|true|ユーザID
-password|string|true|ユーザが登録したパスワード
 
 **レスポンス200応答**
 ```
