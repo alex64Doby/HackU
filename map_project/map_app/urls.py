@@ -6,5 +6,6 @@ urlpatterns = [
 	path('connection', views.connection, name='connection'),
 	path('all', views.all, name='all'),
 	path('signup', views.signup, name='signup'),
-	path('userByPrefecture', views.userByPrefecture, name= 'userByPrefecture')
+	path('userByPrefecture', views.userByPrefecture, name= 'userByPrefecture'),
+	path('connectionByUser', views.connectionByUser, name = 'connectionByUser')
 ]

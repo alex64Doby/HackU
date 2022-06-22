@@ -67,3 +67,36 @@ def userByPrefecture(request):
 	rows = Users.objects.filter(prefecture_id=prefectureId)
 	response = [{"userId":row.user_id, "userName":row.user_name} for row in rows]
 	return HttpResponse(json.dumps(response))
+
+#API:connectionByUser
+#ユーザごとのつながりを表示
+def connectionByUser(request):
+	request = json.loads(request.body)
+	userId = request['userId']
+
+	from .models import Connections
+	rows = Connections.objects.filter(user_id1 = userId)
+
+	offline_connections_detail = [[] for i in range(47)]
+	online_connections_detail = [[] for i in range(47)]
+
+	offline_connections = [0 for i in range(47)]
+	online_connections = [0 for i in range(47)]
+
+	for row in rows:
+		userId2 = row.user_id2.user_id
+		userName = row.user_id2.user_name
+		prefectureId = row.user_id2.prefecture_id
+		print(userId2, userName, prefectureId)
+
+		if(row.status == "offline"):
+			offline_connections_detail[prefectureId].append({"userId": userId2, "userName": userName})
+			offline_connections[prefectureId] += 1
+
+		if(row.status == "online"):
+			online_connections_detail[prefectureId].append({"userId": userId2, "userName": userName})
+			online_connections[prefectureId] += 1
+
+	response = {"offline_connections":offline_connections, "online_connections":online_connections,  "offline_connections_detail": offline_connections_detail, "online_connections_detail": online_connections_detail}
+	return HttpResponse(json.dumps(response))
+		
