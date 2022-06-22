@@ -19,3 +19,4 @@ $ pip install -r requirements.txt
 - [prefectures.md](prefectures.md)
 
 ## [API構成](api.md)
+<img width="700" alt="HackU_API" src="https://user-images.githubusercontent.com/79325399/174964638-007e616c-6ab2-408f-9044-180312e2da6a.png">
