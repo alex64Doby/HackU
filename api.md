@@ -15,6 +15,7 @@
 一覧表示 | GET |/All
 都道府県ごとのユーザ表示 | POST | /UserbyPrefecture
 ユーザごとのつながり表示 | POST | /ConnectionbyUser
+ユーザの検索 | POST | /searchUser
 
 
 ## 各APIの仕様
@@ -239,3 +240,40 @@ onlineConnections|array|true|オンラインで繋がっているユーザ情報
 {
 }
 ```
+
+## ユーザの検索 /searchUser
+ユーザIDのキーワードとユーザ名のキーワードをもとに、
+部分一致するユーザ情報を返す
+（都道府県idが与えられた場合は、
+都道府県で絞り込みをする）
+
+**リクエスト**
+
+```
+ { 
+  userIdKey: "ユーザIDのキーワード",
+  userName:  "ユーザ名のキーワード",
+  prefectureId: 都道府県ID,
+ }
+```
+
+**レスポンス200応答**
+
+```
+{
+ { userId: ユーザID,
+   userName: ユーザ名,
+   prefecture_id: 都道府県ID,
+ }, 
+ { userId: ユーザID,
+   userName: ユーザ名,
+   prefecture_id: 都道府県ID,
+ }, 
+}
+```
+**レスポンス400応答**
+
+```
+{
+}
+ ```
