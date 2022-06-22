@@ -173,7 +173,7 @@ prefectureId|string|true|都道府県ID
  ```
 フィールド名 | 型 | 必須 | 説明
  -- | -- | -- | --
-users|array|true|クエリで与えられた都道府県に住むユーザ情報の配列（user_idで昇順）
+users|array|true|クエリで与えられた都道府県に住むユーザ情報の配列
 userId|string|true|ユーザID
 userName|string|true|ユーザ名
 
@@ -252,23 +252,30 @@ onlineConnections|array|true|オンラインで繋がっているユーザ情報
 ```
  { 
   userIdKey: "ユーザIDのキーワード",
-  userName:  "ユーザ名のキーワード",
+  userNameKey:  "ユーザ名のキーワード",
   prefectureId: 都道府県ID,
  }
 ```
-
+フィールド名 | 型 | 必須 | 説明
+ -- | -- | -- | --
+userIdKey|string|false|ユーザIDのキーワード
+userNameKey|string|false|ユーザ名のキーワード
+prefectureId|string|false|都道府県ID
 **レスポンス200応答**
 
 ```
 {
- { userId: ユーザID,
-   userName: ユーザ名,
-   prefecture_id: 都道府県ID,
- }, 
- { userId: ユーザID,
-   userName: ユーザ名,
-   prefecture_id: 都道府県ID,
- }, 
+ users:
+ [
+  { userId: ユーザID,
+    userName: ユーザ名,
+    prefecture_id: 都道府県ID,
+  }, 
+  { userId: ユーザID,
+    userName: ユーザ名,
+    prefecture_id: 都道府県ID,
+  }, 
+ ]
 }
 ```
 **レスポンス400応答**
@@ -277,3 +284,9 @@ onlineConnections|array|true|オンラインで繋がっているユーザ情報
 {
 }
  ```
+フィールド名 | 型 | 必須 | 説明
+ -- | -- | -- | --
+users|array|true|クエリで与えられた都道府県に住むユーザ情報の配列
+userId|string|true|ユーザID
+userName|string|true|ユーザ名
+prefecture_id|string|true|都道府県ID
