@@ -73,7 +73,6 @@ def signin(request):
 	return HttpResponse(json.dumps(result))
 
 #API:connection
-#既に繋がっている人の処理を考える
 def connection(request):
 	from .models import Connections,Users
 	request = json.loads(request.body)
@@ -89,8 +88,6 @@ def connection(request):
 		Connections.objects.get(connection_id=hs)
 		result = {"status": 400}
 	except:
-		# エラー発生中(1行目と2~3行目は同じ処理内容)
-		# Connections.objects.create(connection_id=hs ,user_id1=request["userId1"] ,user_id2=request["userId2"],status=request["status"])
 		UserId1 = Users.objects.get(user_id=UserId1)
 		UserId2 = Users.objects.get(user_id=UserId2)
 		SaveData = Connections(connection_id=hs ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
