@@ -53,7 +53,7 @@ def all(request):
 #API:signup
 def signup(request):
 	req = json.loads(request.body)
-	try:	# if exsit same id
+	try:	# if exist same id
 		Users.objects.get(user_id=req['userId'])
 		result = {'status': 400}
 	except:	# create new user
@@ -65,10 +65,10 @@ def signup(request):
 #API:signin
 def signin(request):
 	req = json.loads(request.body)
-	try:	# if exist userid
+	try:	# if exist user_id
 		Users.objects.get(user_id=req['userId'])
 		result = {'status': 200}
-	except:	# userid not found
+	except:	# user_id not found
 		result = {'status': 400}
 	return HttpResponse(json.dumps(result))
 
@@ -84,10 +84,10 @@ def connection(request):
 		"userId1": UserId1,
 		"userId2": UserId2,
 	}
-	try:
+	try: # if exist connection_id
 		Connections.objects.get(connection_id=hs)
 		result = {"status": 400}
-	except:
+	except: # register to Connections
 		UserId1 = Users.objects.get(user_id=UserId1)
 		UserId2 = Users.objects.get(user_id=UserId2)
 		SaveData = Connections(connection_id=hs ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
