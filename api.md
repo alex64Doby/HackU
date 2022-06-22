@@ -1,7 +1,9 @@
 ## エンドポイント
-- http://localhost:8000/api/connection
 - http://localhost:8000/api/signup
+- http://localhost:8000/api/connection
 - http://localhost:8000/api/all
+- http://locahost:8000/api/userByPrefecture
+- http://localhost:8000/api/connectionByUser
 
 
 ## API一覧
