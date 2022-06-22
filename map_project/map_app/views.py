@@ -78,20 +78,24 @@ def connection(request):
 	request = json.loads(request.body)
 	UserId1 = request["userId1"]
 	UserId2 = request["userId2"]
-	mkhash = UserId1 + UserId2
-	hs = str(hashlib.md5(mkhash.encode()).hexdigest())
+	mkhash1 = UserId1 + UserId2
+	mkhash2 = UserId2 + UserId1
+	hs1 = str(hashlib.md5(mkhash1.encode()).hexdigest())
+	hs2 = str(hashlib.md5(mkhash2.encode()).hexdigest())
 	result = {
 		"userId1": UserId1,
 		"userId2": UserId2,
 	}
 	try: # if exist connection_id
-		Connections.objects.get(connection_id=hs)
+		Connections.objects.get(connection_id=hs1)
 		result = {"status": 400}
 	except: # register to Connections
 		UserId1 = Users.objects.get(user_id=UserId1)
 		UserId2 = Users.objects.get(user_id=UserId2)
-		SaveData = Connections(connection_id=hs ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
-		SaveData.save()
+		SaveData1= Connections(connection_id=hs1 ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
+		SaveData2 = Connections(connection_id=hs2 ,user_id1=UserId2 ,user_id2=UserId1,status=request["status"])
+		SaveData1.save()
+		SaveData2.save()
 	return HttpResponse(json.dumps(result))
 
 #API:userByPrefecture
