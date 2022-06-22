@@ -125,7 +125,24 @@ def connectionByUser(request):
 		if(row.status == "online"):
 			online_connections_detail[prefectureId].append({"userId": userId2, "userName": userName})
 			online_connections[prefectureId] += 1
-	#[TODO]つながりの個数を都道府県のユーザ数で割る処理
+
+	#各都道府県のユーザ数を求める処理
+	from django.db.models import Count
+	users_num = [0 for i in range(47)]
+
+	#prefecture_idでGroupByを行い,Count(prefecture_id)を実行
+	rows = Users.objects.values('prefecture_id').annotate(total = Count('prefecture_id'))
+	for row in rows:
+		pid = row['prefecture_id']
+		num = row['total']
+		users_num[pid] = num
+
+	#各都道府県に住むユーザ数Nで割る処理
+	for i in range(47):
+		N = users_num[i]
+		offline_connections[i] /= N
+		online_connections[i] /= N
+		
 	response = {"offline_connections":offline_connections, "online_connections":online_connections,  "offline_connections_detail": offline_connections_detail, "online_connections_detail": online_connections_detail}
 	return HttpResponse(json.dumps(response))
 		
