@@ -4,7 +4,7 @@
 - http://localhost:8000/api/all
 - http://localhost:8000/api/userByPrefecture
 - http://localhost:8000/api/connectionByUser
-
+- http://localhost:8000/api/serachUser
 
 ## API一覧
 説明|メゾット|エンドポイント
@@ -167,6 +167,7 @@ prefectureId|string|true|都道府県ID
     {
      userId: userid,
      userName: user_name,
+     prefectureId: prefecture_id,
     },
    ],
  }
@@ -176,6 +177,7 @@ prefectureId|string|true|都道府県ID
 users|array|true|クエリで与えられた都道府県に住むユーザ情報の配列
 userId|string|true|ユーザID
 userName|string|true|ユーザ名
+prefecture_id|string|true|都道府県ID
 
 **レスポンス400応答**
  ```
