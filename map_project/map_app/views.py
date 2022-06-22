@@ -92,8 +92,9 @@ def connection(request):
 	except: # register to Connections
 		UserId1 = Users.objects.get(user_id=UserId1)
 		UserId2 = Users.objects.get(user_id=UserId2)
-		SaveData1= Connections(connection_id=hs1 ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
-		SaveData2 = Connections(connection_id=hs2 ,user_id1=UserId2 ,user_id2=UserId1,status=request["status"])
+
+		SaveData1= Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=request["status"])
+		SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=request["status"])
 		SaveData1.save()
 		SaveData2.save()
 	return HttpResponse(json.dumps(result))
@@ -104,7 +105,8 @@ def userByPrefecture(request):
 	request = json.loads(request.body)
 	prefectureId = request['prefectureId']
 	rows = Users.objects.filter(prefecture_id=prefectureId)
-	response = [{"userId":row.user_id, "userName":row.user_name} for row in rows]
+	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id} for row in rows]
+	response = {"users": users}
 	return HttpResponse(json.dumps(response))
 
 #API:connectionByUser
@@ -155,3 +157,24 @@ def connectionByUser(request):
 
 	response = {"offline_connections":offline_connections, "online_connections":online_connections,  "offline_connections_detail": offline_connections_detail, "online_connections_detail": online_connections_detail}
 	return HttpResponse(json.dumps(response))
+
+def searchUser(request):
+	request = json.loads(request.body)
+	if 'userIdKey' in request:
+		userIdKey = request['userIdKey']
+	else:
+		userIdKey = ''
+	if 'userNameKey' in request:
+		userNameKey = request['userNameKey']
+	else:
+		userNameKey = ''
+	if 'prefectureId' in request:
+		prefectureId = request['prefectureId']
+	else:
+		prefectureId = ''
+	
+	rows = Users.objects.filter(user_id__icontains=userIdKey, user_name__icontains=userNameKey, prefecture_id__icontains=prefectureId)
+	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id} for row in rows]
+	response = {"users": users}
+	return HttpResponse(json.dumps(response))
+
