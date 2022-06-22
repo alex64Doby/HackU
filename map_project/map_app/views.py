@@ -16,15 +16,35 @@ def all(request):
 	from .models import Connections, Users
 	offline_connection_with_pid = Connections.objects.filter(status='offline')
 	online_connection_with_pid = Connections.objects.filter(status='online')
+
 	offline_pid = [(data.user_id1.prefecture_id, data.user_id2.prefecture_id) for data in offline_connection_with_pid]
 	online_pid = [(data.user_id1.prefecture_id, data.user_id2.prefecture_id) for data in online_connection_with_pid]
+
 	offline_connections = [[0 for j in range(47)] for i in range(47)]
 	online_connections = [[0 for j in range(47)] for i in range(47)]
 	for id1, id2 in offline_pid:
 		offline_connections[id1][id2] += 1
 	for id1, id2 in online_pid:
 		online_connections[id1][id2] += 1
-	#[TODO]つながりの個数を都道府県のユーザ数で割る処理
+	
+	#各都道府県のユーザ数を求める処理
+	from django.db.models import Count
+	users_num = [0 for i in range(47)]
+	#prefecture_idでGroupByを行い,Count(prefecture_id)を実行
+	rows = Users.objects.values('prefecture_id').annotate(total = Count('prefecture_id'))
+	for row in rows:
+		pid = row['prefecture_id']
+		num = row['total']
+		users_num[pid] = num
+
+	#つながりの個数をN*Mで割る処理
+	for i in range(47):
+		for j in range(47):
+			M = users_num[i]
+			N = users_num[j]
+			offline_connections[i][j] /= (N * M)
+			online_connections[i][j] /= (N * M)
+
 	response = {"offline_connections": offline_connections, "online_connections": online_connections}
 	json_response = json.dumps(response, ensure_ascii=False, indent=2)
 	return HttpResponse(json_response)
