@@ -8,8 +8,9 @@
 
 ## API一覧
 説明|メゾット|エンドポイント
- -- | -- | -- 
+ -- | -- | --
 ユーザ登録 | POST |/Signup
+ログイン | POST |/Signin
 つながり登録 | POST |/Connection
 一覧表示 | GET |/All
 都道府県ごとのユーザ表示 | POST | /UserbyPrefecture
@@ -33,7 +34,7 @@
  ```
  POST /Signup
  ```
- 
+
  フィールド名 | 型 | 必須 | 説明
  -- | -- | -- | --
 userId|string|true|ユーザID
@@ -43,15 +44,51 @@ prefectureId|number|true|都道府県ID
 **レスポンス200応答**
 ```
 {
-   userId: userid,
-   userName: userName,
-   prefectureId: prefecture_id,
+  status: 200,
 }
 ```
 **レスポンス400応答**
 ```
-{}
+{
+  status: 400,
+}
 ```
+
+
+### ユーザ登録 /Signin
+ログインするAPI
+
+**リクエスト**
+```
+ {
+   userId: userid,
+   passwaord: password,
+ }
+ ```
+
+ ```
+ POST /Signin
+ ```
+
+ フィールド名 | 型 | 必須 | 説明
+ -- | -- | -- | --
+userId|string|true|ユーザID
+password|string|true|ユーザが登録したパスワード
+
+**レスポンス200応答**
+```
+{
+  status: 200,
+}
+```
+**レスポンス400応答**
+```
+{
+  status: 400,
+}
+```
+
+
 
 ### つながり登録 /Connection
 ユーザ間のつながりを登録するAPI
@@ -68,7 +105,7 @@ prefectureId|number|true|都道府県ID
  ```
  POST /Connection
  ```
- 
+
  フィールド名 | 型 | 必須 | 説明
  -- | -- | -- | --
 userId1|string|true|ユーザID1
@@ -162,10 +199,10 @@ userId|string|true|ユーザID
  {
    offline_connections:
    [0, 1, 0, 4,...]
-   
+
    obline_connections:
    [0, 1, 0, 4,...],
-   
+
    offline_connections_detail:
    [
     [
