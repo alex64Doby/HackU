@@ -10,6 +10,7 @@ from sympy import re
 from .models import Users
 
 #API:all
+
 def all(request):
 	result = 'ok'
 	from .models import Connections, Users
@@ -23,6 +24,7 @@ def all(request):
 		offline_connections[id1][id2] += 1
 	for id1, id2 in online_pid:
 		online_connections[id1][id2] += 1
+	#[TODO]つながりの個数を都道府県のユーザ数で割る処理
 	response = {"offline_connections": offline_connections, "online_connections": online_connections}
 	json_response = json.dumps(response, ensure_ascii=False, indent=2)
 	return HttpResponse(json_response)
@@ -103,7 +105,7 @@ def connectionByUser(request):
 		if(row.status == "online"):
 			online_connections_detail[prefectureId].append({"userId": userId2, "userName": userName})
 			online_connections[prefectureId] += 1
-
+	#[TODO]つながりの個数を都道府県のユーザ数で割る処理
 	response = {"offline_connections":offline_connections, "online_connections":online_connections,  "offline_connections_detail": offline_connections_detail, "online_connections_detail": online_connections_detail}
 	return HttpResponse(json.dumps(response))
 		
