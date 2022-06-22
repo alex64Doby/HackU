@@ -17,8 +17,8 @@ def all(request):
 	online_connection_with_pid = Connections.objects.filter(status='online')
 	offline_pid = [(data.user_id1.prefecture_id, data.user_id2.prefecture_id) for data in offline_connection_with_pid]
 	online_pid = [(data.user_id1.prefecture_id, data.user_id2.prefecture_id) for data in online_connection_with_pid]
-	offline_connections = [[0] * 47] * 47
-	online_connections = [[0] * 47] * 47
+	offline_connections = [[0 for j in range(47)] for i in range(47)]
+	online_connections = [[0 for j in range(47)] for i in range(47)]
 	for id1, id2 in offline_pid:
 		offline_connections[id1][id2] += 1
 	for id1, id2 in online_pid:
