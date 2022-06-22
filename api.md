@@ -13,7 +13,7 @@
 つながり登録 | POST |/Connection
 一覧表示 | GET |/All
 都道府県ごとのユーザ表示 | POST | /UserbyPrefecture
-ユーザごとのつながり表示 | POST| /ConnectionbyUser
+ユーザごとのつながり表示 | POST | /ConnectionbyUser
 
 
 ## 各APIの仕様
@@ -106,7 +106,8 @@ userId2|string|true|ユーザID2
  -- | -- | -- | --
 offlineConnections|array|true|オフラインのつながりの配列（47×47）
 onlineConnections|array|true|オンラインのつながりの配列（47×47）
-> Connection[i][j]はprefectureIdがiとjのつながりの個数を表している
+>prefectureId = i,jの都道府県に住むユーザの人数をM, Nとすると
+>  Connection[i][j]はprefectureIdがiとjのつながりの個数（をMNで割った値）を表している
 
 ## 特定の都道府県のユーザ表示 /UserbyPrefecture
 特定の都道府県のユーザを表示するAPI
@@ -195,7 +196,8 @@ offlineConnections|array|true|オフラインのつながりの配列（47）
 onlineConnections|array|true|オンラインのつながりの配列（47）
 offlineConnections|array|true|オフラインで繋がっているユーザ情報の配列（47）
 onlineConnections|array|true|オンラインで繋がっているユーザ情報の配列（47）
-> Connections[i]は指定されたユーザとid = i の都道府県の人とのつながりの個数を表している
+> prefectureId = iの都道府県のユーザ数をNとすると
+> Connections[i]は指定されたユーザとid = i の都道府県の人とのつながりの個数を（Nで割った値を）表している
 
 **レスポンス400応答**
 ```
