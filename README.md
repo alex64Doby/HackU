@@ -1,9 +1,9 @@
 # HackU
 ### プロジェクトファイル
-- [map_project](/map_project/)
-  - [map_app](/map_project/map_app/)　
-  - [map_project](/map_project/map_project/)
-  - [requirements.txt](/map_project/requirements.txt)
+- [HackU/map_project/](/map_project/)
+  - [HackU/map_project/map_app](/map_project/map_app/)　
+  - [HackU/map_project/map_project](/map_project/map_project/)
+  - [HackU/map_project/requirements.txt](/map_project/requirements.txt)
 
 ```
 $ pip install -r requirements.txt
