@@ -81,21 +81,20 @@ def connection(request):
 	UserId2 = request["userId2"]
 	mkhash = UserId1 + UserId2
 	hs = str(hashlib.md5(mkhash.encode()).hexdigest())
-	# エラーチェック用(既に存在するデータ)
-	# hs = "86cbce9d-b046-4c12-bb5a-b90ba73c"
+	result = {
+		"userId1": UserId1,
+		"userId2": UserId2,
+	}
 	try:
 		Connections.objects.get(connection_id=hs)
 		result = {"status": 400}
 	except:
 		# エラー発生中(1行目と2~3行目は同じ処理内容)
 		# Connections.objects.create(connection_id=hs ,user_id1=request["userId1"] ,user_id2=request["userId2"],status=request["status"])
-		# SaveData = Connections(connection_id=hs ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
-		# SaveData.save()
-		result = {
-		"connection_id": hs,
-		"userId1": UserId1,
-		"userId2": UserId2,
-		}
+		UserId1 = Users.objects.get(user_id=UserId1)
+		UserId2 = Users.objects.get(user_id=UserId2)
+		SaveData = Connections(connection_id=hs ,user_id1=UserId1 ,user_id2=UserId2,status=request["status"])
+		SaveData.save()
 	return HttpResponse(json.dumps(result))
 
 #API:userByPrefecture
