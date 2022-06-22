@@ -11,7 +11,7 @@ $ pip install -r requirements.txt
 で同じ環境を構築できる筈です。
 
 
-## DB構成
+## [DB構成](table.md)
 <img width="650" alt="HackU_DB" src="https://user-images.githubusercontent.com/79325399/174953182-c1747b21-8634-45d3-b217-107edc5f9545.png">
 
 
