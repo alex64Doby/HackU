@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import json
 import hashlib
+from more_itertools import first
 
 from requests import request
 
@@ -82,9 +83,14 @@ def connection(request):
 	mkhash2 = UserId2 + UserId1
 	hs1 = str(hashlib.md5(mkhash1.encode()).hexdigest())
 	hs2 = str(hashlib.md5(mkhash2.encode()).hexdigest())
+	# connectionMileageテスト用データ(サーバーからデータを取得する処理を実装する)
+	frequency = 1
+	distance = 13
+	point = connectionMileage(request,request["status"],frequency,distance)
 	result = {
 		"userId1": UserId1,
 		"userId2": UserId2,
+		"point":point,
 	}
 	try: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
@@ -92,7 +98,6 @@ def connection(request):
 	except: # register to Connections
 		UserId1 = Users.objects.get(user_id=UserId1)
 		UserId2 = Users.objects.get(user_id=UserId2)
-
 		SaveData1= Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=request["status"])
 		SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=request["status"])
 		SaveData1.save()
@@ -178,3 +183,34 @@ def searchUser(request):
 	response = {"users": users}
 	return HttpResponse(json.dumps(response))
 
+# 適当に計算式を実装
+# Connection Mileage
+def connectionMileage(request,status,frequency,distance):
+	# jsonから必要なデータを取得し計算に最適化する処理を記述
+	UserId1 = request["userId1"]
+	UserId2 = request["userId2"]
+	# UserIdから距離や最終connectionを取得
+	UserId1 = Users.objects.get(user_id=UserId1)
+	UserId2 = Users.objects.get(user_id=UserId2)
+	# calc Pt
+	basePt = 10
+	statusPt = 0
+	firstBonusPt = 0
+	frequencyPt = 3
+	distancePt = 1
+	if status == "offline":
+		statusPt = 5
+	if frequency == 0:
+		firstBonusPt = 5
+	elif frequency >= 5:
+		frequency *= 2
+	distance = int(distance/2)
+	if distance > 15:
+		distancePt = 3
+	elif distance > 10:
+		distancePt = 2
+	elif distance > 5:
+		distancePt = 1
+	point = basePt + statusPt + frequencyPt + firstBonusPt + distancePt
+	
+	return(point)
