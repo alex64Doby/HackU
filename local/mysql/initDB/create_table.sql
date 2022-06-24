@@ -3,6 +3,7 @@
      `user_id` CHAR(48) NOT NULL,
      `user_name` CHAR(16) NOT NULL,
      `prefecture_id` INT NOT NULL,
+     `point` int DEFAULT 0,
      PRIMARY KEY (`user_id`));
 
  CREATE TABLE IF NOT EXISTS `DB`.`Prefectures`(
@@ -15,4 +16,7 @@
      `user_id1` CHAR(48) NOT NULL,
      `user_id2` CHAR(48) NOT NULL,
      `status` CHAR(48) NOT NULL,
-     PRIMARY KEY (`connection_id`));
+     `point` INT,
+     PRIMARY KEY (`connection_id`),
+     FOREIGN KEY (`user_id1`) REFERENCES Users(`user_id`),
+     FOREIGN KEY (`user_id2`) REFERENCES Users(`user_id`));
