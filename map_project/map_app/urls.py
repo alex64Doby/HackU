@@ -9,5 +9,6 @@ urlpatterns = [
 	path('signin', views.signin, name='signin'),
 	path('userByPrefecture', views.userByPrefecture, name= 'userByPrefecture'),
 	path('connectionByUser', views.connectionByUser, name = 'connectionByUser'),
-	path('searchUser', views.searchUser, name = 'searchUser')
+	path('searchUser', views.searchUser, name = 'searchUser'),
+	path('searchConnection', views.searchConnection, name = 'searchConnection')
 ]

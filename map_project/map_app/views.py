@@ -8,7 +8,7 @@ from requests import request
 
 from sympy import re
 # Create your views here.
-from .models import Users
+from .models import Users, Connections
 
 #API:all
 
@@ -184,6 +184,30 @@ def searchUser(request):
 	rows = Users.objects.filter(user_id__icontains=userIdKey, user_name__icontains=userNameKey, prefecture_id__icontains=prefectureId)
 	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id, "point": row.point} for row in rows]
 	response = {"users": users}
+	return HttpResponse(json.dumps(response))
+
+def searchConnection(request):
+	request = json.loads(request.body)
+	if 'userId1Key' in request:
+		userId1Key = request['userId1Key']
+	else:
+		userId1Key = ''
+	if 'userId2Key' in request:
+		userId2Key = request['userId2Key']
+	else:
+		userId2Key = ''
+	if 'pointGreaterThan' in request:
+		pointGreaterThan = request['pointGreaterThan']
+	else:
+		pointGreaterThan = 0
+	if 'pointLessThan' in request:
+		pointLessThan = request['pointLessThan']
+	else:
+		pointLessThan = 1000000
+	#[TODO]時間での絞り込み（直近１週間、1ヶ月など）
+	rows = Connections.objects.filter(user_id1__user_id__contains=userId1Key, user_id2__user_id__contains=userId2Key, point__gt=pointGreaterThan, point__lt = pointLessThan)
+	connections = [{"connectionId": row.connection_id, "userId1":row.user_id1.user_id, "userId2":row.user_id2.user_id, "createdBy": str(row.created_by), "updatedBy": str(row.updated_by), "point": row.point} for row in rows]
+	response = {"connections": connections}
 	return HttpResponse(json.dumps(response))
 
 # 適当に計算式を実装
