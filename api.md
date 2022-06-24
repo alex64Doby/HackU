@@ -5,7 +5,8 @@
 - http://localhost:8000/api/all
 - http://localhost:8000/api/userByPrefecture
 - http://localhost:8000/api/connectionByUser
-- http://localhost:8000/api/serachUser
+- http://localhost:8000/api/searchUser
+- http://locahost:8000/api/searchConnection
 
 ## API一覧
 説明|メゾット|エンドポイント
@@ -17,7 +18,7 @@
 都道府県ごとのユーザ表示 | POST | /UserbyPrefecture
 ユーザごとのつながり表示 | POST | /ConnectionbyUser
 ユーザの検索 | POST | /searchUser
-
+つながりの検索　| POST | /searchConnection
 
 ## 各APIの仕様
 
@@ -293,3 +294,49 @@ users|array|true|クエリで与えられた都道府県に住むユーザ情報
 userId|string|true|ユーザID
 userName|string|true|ユーザ名
 prefecture_id|string|true|都道府県ID
+
+## つながりの検索 /searchConnection
+与えられたuserId1Key, userID2Key（完全一致）, pointGreaterThan, pointLessThanによって
+ユーザとポイントによる絞り込みができる。（時間での絞り込みは未実装）
+
+**リクエスト**
+```
+{
+ userId1Key: user_id,
+ userId2Key: user_id,
+ pointGreaterThan: ポイントの下限値（含まない）,
+ pointLessThan: ポイントの上限値（含まない）,
+}
+```
+フィールド名 | 型 | 必須 | 説明
+ -- | -- | -- | --
+ userId1Key | String | false | 検索したいユーザID1
+ userId2Key | String | false | 検索したいユーザID2
+ pointGreaterThan | Number | false | ポイントの下限値
+ pointLessThan | Number | false | ポイントの上限値
+
+ **レスポンス**
+ ```
+ {
+  connections:
+  [
+   { connectionId: connection_id,
+     userId1: user_id1,
+     userId2: user_id2,
+     createdBy: 作成日時,
+     updatedBy: 更新日時,
+     point: ポイント,
+   }
+  ]
+ }
+ ```
+
+フィールド名 | 型 | 必須 | 説明
+ -- | -- | -- | --
+ connectionId | String | true | コネクション ID
+ userId1 | String | true | ユーザID
+ userId2 | String | true |　ユーザID
+ createdBy | DATETIME | true | 作成日時
+ updatedBy | DATETIME | true | 更新日時
+ point | Number | true | ポイント
+ 
