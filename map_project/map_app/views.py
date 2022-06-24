@@ -192,7 +192,6 @@ def connectionMileage(request,status,frequency,distance):
 	# UserIdから距離や最終connectionを取得
 	UserId1 = Users.objects.get(user_id=UserId1)
 	UserId2 = Users.objects.get(user_id=UserId2)
-	# calc Pt
 	basePt = 10
 	statusPt = 0
 	firstBonusPt = 0
