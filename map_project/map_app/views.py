@@ -204,8 +204,15 @@ def searchConnection(request):
 		pointLessThan = request['pointLessThan']
 	else:
 		pointLessThan = 1000000
+
 	#[TODO]時間での絞り込み（直近１週間、1ヶ月など）
-	rows = Connections.objects.filter(user_id1__user_id__contains=userId1Key, user_id2__user_id__contains=userId2Key, point__gt=pointGreaterThan, point__lt = pointLessThan)
+	if(userId1Key != '' and userId2Key != ''):
+		rows = Connections.objects.filter(user_id1__user_id__iexact=userId1Key, user_id2__user_id__iexact=userId2Key, point__gt=pointGreaterThan, point__lt = pointLessThan)
+	if(userId1Key != '' and userId2Key == ''):
+		rows = Connections.objects.filter(user_id1__user_id__iexact=userId1Key, point__gt=pointGreaterThan, point__lt = pointLessThan)
+	if(userId1Key == '' and userId2Key == ''):
+		rows = Connections.objects.filter(point__gt=pointGreaterThan, point__lt = pointLessThan)
+	
 	connections = [{"connectionId": row.connection_id, "userId1":row.user_id1.user_id, "userId2":row.user_id2.user_id, "createdBy": str(row.created_by), "updatedBy": str(row.updated_by), "point": row.point} for row in rows]
 	response = {"connections": connections}
 	return HttpResponse(json.dumps(response))
