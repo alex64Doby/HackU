@@ -133,14 +133,17 @@ def connectionByUser(request):
 		userId2 = row.user_id2.user_id
 		userName = row.user_id2.user_name
 		prefectureId = row.user_id2.prefecture_id
+		createdBy = str(row.created_by)#DATETIME -> str
+		updatedBy = str(row.updated_by)#DATETIME -> str
+		point = row.point
 		print(userId2, userName, prefectureId)
 
 		if(row.status == "offline"):
-			offline_connections_detail[prefectureId].append({"userId": userId2, "userName": userName})
+			offline_connections_detail[prefectureId].append({"userId": userId2, "userName": userName, "createdBy": createdBy, "updatedBy": updatedBy, "point": point})
 			offline_connections[prefectureId] += 1
 
 		if(row.status == "online"):
-			online_connections_detail[prefectureId].append({"userId": userId2, "userName": userName})
+			online_connections_detail[prefectureId].append({"userId": userId2, "userName": userName, "createdBy": createdBy, "updatedBy": updatedBy, "point": point})
 			online_connections[prefectureId] += 1
 
 	#各都道府県のユーザ数を求める処理

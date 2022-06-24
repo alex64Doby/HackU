@@ -17,6 +17,8 @@
      `user_id2` CHAR(48) NOT NULL,
      `status` CHAR(48) NOT NULL,
      `point` INT,
+     `created_by` DATETIME DEFAULT CURRENT_TIMESTAMP,
+     `updated_by` DATETIME DEFAULT CURRENT_TIMESTAMP,
      PRIMARY KEY (`connection_id`),
      FOREIGN KEY (`user_id1`) REFERENCES Users(`user_id`),
      FOREIGN KEY (`user_id2`) REFERENCES Users(`user_id`));
