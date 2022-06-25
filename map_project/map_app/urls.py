@@ -10,5 +10,6 @@ urlpatterns = [
 	path('userByPrefecture', views.userByPrefecture, name= 'userByPrefecture'),
 	path('connectionByUser', views.connectionByUser, name = 'connectionByUser'),
 	path('searchUser', views.searchUser, name = 'searchUser'),
+	path('searchUserByUserIdExactly', views.searchUserByUserIdExactly, name = 'searchUserByUserIdExactly'),
 	path('searchConnection', views.searchConnection, name = 'searchConnection')
 ]
