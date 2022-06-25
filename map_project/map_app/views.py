@@ -1,11 +1,13 @@
+from dis import dis
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
 import hashlib
+import datetime
+
+from sqlalchemy import false
 from more_itertools import first
-
 from requests import request
-
 from sympy import re
 # Create your views here.
 from .models import Users, Connections
@@ -79,27 +81,42 @@ def connection(request):
 	request = json.loads(request.body)
 	UserId1 = request["userId1"]
 	UserId2 = request["userId2"]
-	mkhash1 = UserId1 + UserId2
-	mkhash2 = UserId2 + UserId1
-	hs1 = str(hashlib.md5(mkhash1.encode()).hexdigest())
-	hs2 = str(hashlib.md5(mkhash2.encode()).hexdigest())
+	mkHash1 = UserId1 + UserId2
+	mkHash2 = UserId2 + UserId1
+	hs1 = str(hashlib.md5(mkHash1.encode()).hexdigest())
+	hs2 = str(hashlib.md5(mkHash2.encode()).hexdigest())
+	User1 = Users.objects.get(pk=UserId1)
+	User2 = Users.objects.get(pk=UserId2)
 	# connectionMileageテスト用データ(サーバーからデータを取得する処理を実装する)
-	frequency = 1
-	distance = 13
+	frequency = 0
+	today = datetime.datetime.now()
+	distance = abs(User1.prefecture_id - User2.prefecture_id)
+	# [TODO]Connectionsテーブルにtimesが追加されたら回数の保存を実装
+	# frequency = Connections.objects.get(pk=hs1).times
 	point = connectionMileage(request,request["status"],frequency,distance)
 	result = {
 		"userId1": UserId1,
 		"userId2": UserId2,
-		"point":point,
+		"distance":distance,
+		"point":point
 	}
-	try: # if exist connection_id
+	# [TODO]timesが実装されたら回数を取得する処理を実装
+	# try:
+	# 	frequency = Connections.objects.get(pk=hs1).times
+	# 	frequency = 0
+	# except:
+	# 	frequency = Connections.objects.get(pk=hs1).times
+	try:
+		# frequency == 0: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
-		result = {"status": 400}
+		result = {
+			"status":400
+		}
 	except: # register to Connections
 		UserId1 = Users.objects.get(user_id=UserId1)
 		UserId2 = Users.objects.get(user_id=UserId2)
-		SaveData1= Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=request["status"])
-		SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=request["status"])
+		SaveData1 = Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=request["status"], created_by=today, updated_by=today)
+		SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=request["status"], created_by=today, updated_by=today)
 		SaveData1.save()
 		SaveData2.save()
 	return HttpResponse(json.dumps(result))
@@ -235,15 +252,14 @@ def connectionMileage(request,status,frequency,distance):
 		statusPt = 5
 	if frequency == 0:
 		firstBonusPt = 5
-	elif frequency >= 5:
+	elif frequency > 5:
 		frequency *= 2
 	distance = int(distance/2)
-	if distance > 15:
+	if distance > 11:
 		distancePt = 3
-	elif distance > 10:
+	elif distance > 7:
 		distancePt = 2
-	elif distance > 5:
+	elif distance > 3:
 		distancePt = 1
 	point = basePt + statusPt + frequencyPt + firstBonusPt + distancePt
-	
 	return(point)
