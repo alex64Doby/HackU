@@ -6,6 +6,7 @@
 - http://localhost:8000/api/userByPrefecture
 - http://localhost:8000/api/connectionByUser
 - http://localhost:8000/api/searchUser
+- http://localhost:8000/api/searchUserByUserIdExactly
 - http://locahost:8000/api/searchConnection
 
 ## API一覧
@@ -294,6 +295,46 @@ users|array|true|クエリで与えられた都道府県に住むユーザ情報
 userId|string|true|ユーザID
 userName|string|true|ユーザ名
 prefecture_id|string|true|都道府県ID
+
+## ユーザ検索（ID完全一致）/searchUserByUserIdExactly
+与えられたuserIdKeyをもとに完全一致するユーザの情報を返す。
+**リクエスト**
+
+```
+ { 
+  userIdKey: "ユーザID",
+ }
+```
+フィールド名 | 型 | 必須 | 説明
+ -- | -- | -- | --
+userIdKey|string|false|ユーザID
+
+**レスポンス200応答**
+
+```
+{
+ users:
+ [
+  { userId: ユーザID,
+    userName: ユーザ名,
+    prefecture_id: 都道府県ID,
+  }
+ ]
+}
+```
+**レスポンス400応答**
+
+```
+{
+}
+ ```
+フィールド名 | 型 | 必須 | 説明
+ -- | -- | -- | --
+users|array|true|クエリで与えられた都道府県に住むユーザ情報の配列
+userId|string|true|ユーザID
+userName|string|true|ユーザ名
+prefecture_id|string|true|都道府県ID
+
 
 ## つながりの検索 /searchConnection
 与えられたuserId1Key, userID2Key（完全一致）, pointGreaterThan, pointLessThanによって
