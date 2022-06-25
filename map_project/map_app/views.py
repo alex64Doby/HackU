@@ -181,7 +181,7 @@ def searchUser(request):
 	else:
 		prefectureId = ''
 	
-	rows = Users.objects.filter(user_id__icontains=userIdKey, user_name__icontains=userNameKey, prefecture_id__iexact=prefectureId)
+	rows = Users.objects.filter(user_id__icontains=userIdKey, user_name__icontains=userNameKey, prefecture_id__icontains=prefectureId)
 	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id, "point": row.point} for row in rows]
 	response = {"users": users}
 	return HttpResponse(json.dumps(response))
