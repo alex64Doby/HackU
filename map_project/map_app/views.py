@@ -1,4 +1,6 @@
 from dis import dis
+from time import time
+from venv import create
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
@@ -81,8 +83,9 @@ def connection(request):
 	request = json.loads(request.body)
 	UserId1 = request["userId1"]
 	UserId2 = request["userId2"]
-	mkHash1 = UserId1 + UserId2
-	mkHash2 = UserId2 + UserId1
+	status = request["status"]
+	mkHash1 = UserId1 + UserId2 + status
+	mkHash2 = UserId2 + UserId1 + status
 	hs1 = str(hashlib.md5(mkHash1.encode()).hexdigest())
 	hs2 = str(hashlib.md5(mkHash2.encode()).hexdigest())
 	User1 = Users.objects.get(pk=UserId1)
@@ -91,34 +94,28 @@ def connection(request):
 	frequency = 0
 	today = datetime.datetime.now()
 	distance = abs(User1.prefecture_id - User2.prefecture_id)
-	# [TODO]Connectionsテーブルにtimesが追加されたら回数の保存を実装
-	# frequency = Connections.objects.get(pk=hs1).times
-	point = connectionMileage(request,request["status"],frequency,distance)
+	try:
+		frequency = Connections.objects.get(pk=hs1).times
+	except:
+		frequency = 0
+	point = connectionMileage(request,status,frequency,distance)
 	result = {
+		"hash1":hs1,
+		"hash2":hs2,
 		"userId1": UserId1,
 		"userId2": UserId2,
+		"status":status,
 		"distance":distance,
-		"point":point
+		"point":point,
+		"freq":frequency,
 	}
-	# [TODO]timesが実装されたら回数を取得する処理を実装
-	# try:
-	# 	frequency = Connections.objects.get(pk=hs1).times
-	# 	frequency = 0
-	# except:
-	# 	frequency = Connections.objects.get(pk=hs1).times
 	try:
 		# frequency == 0: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
-		result = {
-			"status":400
-		}
+		createDay = Connections.objects.get(connection_id=hs1).created_by
+		saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency)
 	except: # register to Connections
-		UserId1 = Users.objects.get(user_id=UserId1)
-		UserId2 = Users.objects.get(user_id=UserId2)
-		SaveData1 = Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=request["status"], created_by=today, updated_by=today)
-		SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=request["status"], created_by=today, updated_by=today)
-		SaveData1.save()
-		SaveData2.save()
+		saveConnection(hs1,hs2,UserId1,UserId2,status,today,today,point,frequency)
 	return HttpResponse(json.dumps(result))
 
 #API:userByPrefecture
@@ -274,3 +271,12 @@ def connectionMileage(request,status,frequency,distance):
 		distancePt = 1
 	point = basePt + statusPt + frequencyPt + firstBonusPt + distancePt
 	return(point)
+
+def saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency):
+	UserId1 = Users.objects.get(user_id=UserId1)
+	UserId2 = Users.objects.get(user_id=UserId2)
+	SaveData1 = Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
+	SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
+	SaveData1.save()
+	SaveData2.save()
+	return()
