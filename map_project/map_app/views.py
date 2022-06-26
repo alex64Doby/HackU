@@ -6,6 +6,8 @@ from django.http import HttpResponse
 import json
 import hashlib
 import datetime
+from conda import CondaError
+from numpy import integer, polymul
 
 from sqlalchemy import false
 from more_itertools import first
@@ -107,15 +109,18 @@ def connection(request):
 		"status":status,
 		"distance":distance,
 		"point":point,
+		"pt":Users.objects.get(pk=UserId1).point + point,
 		"freq":frequency,
 	}
 	try:
-		# frequency == 0: # if exist connection_id
+		# frequency != 0: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
 		createDay = Connections.objects.get(connection_id=hs1).created_by
 		saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency)
+		savepoint(UserId1,UserId2,point)
 	except: # register to Connections
 		saveConnection(hs1,hs2,UserId1,UserId2,status,today,today,point,frequency)
+		savepoint(UserId1,UserId2,point)
 	return HttpResponse(json.dumps(result))
 
 #API:userByPrefecture
@@ -275,8 +280,17 @@ def connectionMileage(request,status,frequency,distance):
 def saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency):
 	UserId1 = Users.objects.get(user_id=UserId1)
 	UserId2 = Users.objects.get(user_id=UserId2)
-	SaveData1 = Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
-	SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
-	SaveData1.save()
-	SaveData2.save()
+	SaveConnectionData1 = Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
+	SaveConnectionData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
+	SaveConnectionData1.save()
+	SaveConnectionData2.save()
+	return()
+
+def savepoint(UserId1,UserId2,point):
+	User1 = Users.objects.get(user_id=UserId1)
+	User2 = Users.objects.get(user_id=UserId2)
+	SaveUserPt1 = Users(user_id=UserId1, user_name=User1.user_name, prefecture_id=User1.prefecture_id, point=User1.point + point)
+	SaveUserPt2 = Users(user_id=UserId2, user_name=User2.user_name, prefecture_id=User2.prefecture_id, point=User2.point + point)
+	SaveUserPt1.save()
+	SaveUserPt2.save()
 	return()
