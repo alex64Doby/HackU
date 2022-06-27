@@ -199,7 +199,7 @@ def searchUser(request):
 		prefectureId = request['prefectureId']
 	else:
 		prefectureId = ''
-	
+
 	rows = Users.objects.filter(user_id__icontains=userIdKey, user_name__icontains=userNameKey, prefecture_id__icontains=prefectureId)
 	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id, "point": row.point} for row in rows]
 	response = {"users": users}
@@ -242,7 +242,7 @@ def searchConnection(request):
 		rows = Connections.objects.filter(user_id1__user_id__iexact=userId1Key, point__gt=pointGreaterThan, point__lt = pointLessThan)
 	if(userId1Key == '' and userId2Key == ''):
 		rows = Connections.objects.filter(point__gt=pointGreaterThan, point__lt = pointLessThan)
-	
+
 	connections = [{"connectionId": row.connection_id, "userId1":row.user_id1.user_id, "userId2":row.user_id2.user_id, "createdBy": str(row.created_by), "updatedBy": str(row.updated_by), "point": row.point} for row in rows]
 	response = {"connections": connections}
 	return HttpResponse(json.dumps(response))
@@ -294,3 +294,10 @@ def savepoint(UserId1,UserId2,point):
 	SaveUserPt1.save()
 	SaveUserPt2.save()
 	return()
+
+def ranking(request):
+	UPPER_SLICE = 10
+	table = Users.objects.exclude(point=0)
+	users = [{"userId":user.user_id, "userName":user.user_name, "prefectureId": user.prefecture_id, "point": user.point} for user in table]
+	ranking = sorted(users, key=lambda x:x['point'], reverse=True)
+	return HttpResponse(json.dumps({"ranking":ranking[:UPPER_SLICE]}, ensure_ascii=False))
