@@ -131,7 +131,7 @@ def userByPrefecture(request):
 	rows = Users.objects.filter(prefecture_id=prefectureId)
 	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id} for row in rows]
 	response = {"users": users}
-	return HttpResponse(json.dumps(response))
+	return HttpResponse(json.dumps(response, ensure_ascii=False))
 
 #API:connectionByUser
 #ユーザごとのつながりを表示
@@ -183,7 +183,7 @@ def connectionByUser(request):
 		online_connections[i] /= N
 
 	response = {"offline_connections":offline_connections, "online_connections":online_connections,  "offline_connections_detail": offline_connections_detail, "online_connections_detail": online_connections_detail}
-	return HttpResponse(json.dumps(response))
+	return HttpResponse(json.dumps(response, ensure_ascii=False))
 
 def searchUser(request):
 	request = json.loads(request.body)
@@ -203,7 +203,7 @@ def searchUser(request):
 	rows = Users.objects.filter(user_id__icontains=userIdKey, user_name__icontains=userNameKey, prefecture_id__icontains=prefectureId)
 	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id, "point": row.point} for row in rows]
 	response = {"users": users}
-	return HttpResponse(json.dumps(response))
+	return HttpResponse(json.dumps(response, ensure_ascii=False))
 
 def searchUserByUserIdExactly(request):
 	request = json.loads(request.body)
@@ -214,7 +214,7 @@ def searchUserByUserIdExactly(request):
 	rows = Users.objects.filter(user_id__iexact=userIdKey)
 	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id, "point": row.point} for row in rows]
 	response = {"users": users}
-	return HttpResponse(json.dumps(response))
+	return HttpResponse(json.dumps(response, ensure_ascii=False))
 
 def searchConnection(request):
 	request = json.loads(request.body)
@@ -245,7 +245,7 @@ def searchConnection(request):
 
 	connections = [{"connectionId": row.connection_id, "userId1":row.user_id1.user_id, "userId2":row.user_id2.user_id, "createdBy": str(row.created_by), "updatedBy": str(row.updated_by), "point": row.point} for row in rows]
 	response = {"connections": connections}
-	return HttpResponse(json.dumps(response))
+	return HttpResponse(json.dumps(response, ensure_ascii=False))
 
 # 適当に計算式を実装
 # Connection Mileage
