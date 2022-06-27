@@ -86,7 +86,15 @@ DATABASES = {
         'PASSWORD': 'team8',
          'HOST': '127.0.0.1',
          'PORT':  '3306',
-
+    },
+    #本番DBの設定
+    'prod': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'DB',
+        'USER': 'admin',
+        'PASSWORD': '********',
+         'HOST': '****',
+         'PORT':  '3306',
     }
 }
 pymysql.version_info = (1, 4, 2, "final", 0)
