@@ -92,8 +92,8 @@ DATABASES = {
         'ENGINE': 'mysql.connector.django',
         'NAME': 'DB',
         'USER': 'admin',
-        'PASSWORD': '********',
-         'HOST': '****',
+        'PASSWORD': 'team8team8',
+         'HOST': 'dbhacku.cwbidoauquma.ap-northeast-1.rds.amazonaws.com',
          'PORT':  '3306',
     }
 }
