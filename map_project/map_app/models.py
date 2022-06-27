@@ -6,8 +6,10 @@ class Connections(models.Model):
     user_id2 = models.ForeignKey('Users', models.DO_NOTHING, db_column='user_id2', related_name = 'user_id2')
     status = models.CharField(max_length=48)
     point = models.IntegerField(blank=True, null=True)
+    times = models.IntegerField(default=1)
     created_by = models.DateTimeField(blank=True, null=True)
     updated_by = models.DateTimeField(blank=True, null=True)
+
 
     class Meta:
         managed = False
