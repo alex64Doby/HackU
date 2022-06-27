@@ -104,17 +104,17 @@ def connection(request):
 	result = {
 		"hash1":hs1,
 		"hash2":hs2,
-		"userId1": UserId1,
-		"userId2": UserId2,
+		"userId1":UserId1,
+		"userId2":UserId2,
 		"status":status,
 		"distance":distance,
 		"point":point,
-		"pt":Users.objects.get(pk=UserId1).point + point,
 		"freq":frequency,
 	}
 	try:
 		# frequency != 0: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
+		point = Connections.objects.get(connection_id=hs1).point + point
 		createDay = Connections.objects.get(connection_id=hs1).created_by
 		saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency)
 		savepoint(UserId1,UserId2,point)
