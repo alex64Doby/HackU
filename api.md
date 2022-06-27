@@ -8,6 +8,7 @@
 - http://localhost:8000/api/searchUser
 - http://localhost:8000/api/searchUserByUserIdExactly
 - http://locahost:8000/api/searchConnection
+- http://locahost:8000/api/ranking
 
 ## API一覧
 説明|メゾット|エンドポイント
@@ -20,6 +21,7 @@
 ユーザごとのつながり表示 | POST | /ConnectionbyUser
 ユーザの検索 | POST | /searchUser
 つながりの検索　| POST | /searchConnection
+ランキング表示 | GET |/ranking
 
 ## 各APIの仕様
 
@@ -255,7 +257,7 @@ onlineConnections|array|true|オンラインで繋がっているユーザ情報
 **リクエスト**
 
 ```
- { 
+ {
   userIdKey: "ユーザIDのキーワード",
   userNameKey:  "ユーザ名のキーワード",
   prefectureId: 都道府県ID,
@@ -275,11 +277,11 @@ prefectureId|string|false|都道府県ID
   { userId: ユーザID,
     userName: ユーザ名,
     prefecture_id: 都道府県ID,
-  }, 
+  },
   { userId: ユーザID,
     userName: ユーザ名,
     prefecture_id: 都道府県ID,
-  }, 
+  },
  ]
 }
 ```
@@ -301,7 +303,7 @@ prefecture_id|string|true|都道府県ID
 **リクエスト**
 
 ```
- { 
+ {
   userIdKey: "ユーザID",
  }
 ```
@@ -380,4 +382,30 @@ prefecture_id|string|true|都道府県ID
  createdBy | DATETIME | true | 作成日時
  updatedBy | DATETIME | true | 更新日時
  point | Number | true | ポイント
- 
+
+### ランキング表示 /ranking
+**レスポンス200応答**
+```
+{
+ranking:
+[
+ {
+   userId: user_id,
+   userName: user_name,
+   prefectureId: prefecture_id,
+   point: user_point
+  },
+  ,,,
+ ]
+}
+```
+フィールド名 | 型 | 必須 | 説明
+-- | -- | -- | --
+ranking|array|true|ランキング順のユーザ情報の配列
+userId|string|true|ユーザID
+userName|string|true|ユーザ名
+prefecture_id|string|true|都道府県ID
+point|int|true|ユーザの所有ポイント
+>ランキングの上位10人のユーザ情報を取得．
+>リクエスト毎にデータベースから取り出してソートする．（point=0の人は除外）
+>毎回 O(n log n)かかるがデータ数が数百程度を想定しているため問題なさそう．

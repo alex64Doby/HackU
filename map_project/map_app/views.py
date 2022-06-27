@@ -1,11 +1,17 @@
+from dis import dis
+from time import time
+from venv import create
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
 import hashlib
+import datetime
+from conda import CondaError
+from numpy import integer, polymul
+
+from sqlalchemy import false
 from more_itertools import first
-
 from requests import request
-
 from sympy import re
 # Create your views here.
 from .models import Users, Connections
@@ -79,29 +85,42 @@ def connection(request):
 	request = json.loads(request.body)
 	UserId1 = request["userId1"]
 	UserId2 = request["userId2"]
-	mkhash1 = UserId1 + UserId2
-	mkhash2 = UserId2 + UserId1
-	hs1 = str(hashlib.md5(mkhash1.encode()).hexdigest())
-	hs2 = str(hashlib.md5(mkhash2.encode()).hexdigest())
+	status = request["status"]
+	mkHash1 = UserId1 + UserId2 + status
+	mkHash2 = UserId2 + UserId1 + status
+	hs1 = str(hashlib.md5(mkHash1.encode()).hexdigest())
+	hs2 = str(hashlib.md5(mkHash2.encode()).hexdigest())
+	User1 = Users.objects.get(pk=UserId1)
+	User2 = Users.objects.get(pk=UserId2)
 	# connectionMileageテスト用データ(サーバーからデータを取得する処理を実装する)
-	frequency = 1
-	distance = 13
-	point = connectionMileage(request,request["status"],frequency,distance)
+	frequency = 0
+	today = datetime.datetime.now()
+	distance = abs(User1.prefecture_id - User2.prefecture_id)
+	try:
+		frequency = Connections.objects.get(pk=hs1).times
+	except:
+		frequency = 0
+	point = connectionMileage(request,status,frequency,distance)
 	result = {
-		"userId1": UserId1,
-		"userId2": UserId2,
+		"hash1":hs1,
+		"hash2":hs2,
+		"userId1":UserId1,
+		"userId2":UserId2,
+		"status":status,
+		"distance":distance,
 		"point":point,
+		"freq":frequency,
 	}
-	try: # if exist connection_id
+	try:
+		# frequency != 0: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
-		result = {"status": 400}
+		point = Connections.objects.get(connection_id=hs1).point + point
+		createDay = Connections.objects.get(connection_id=hs1).created_by
+		saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency)
+		savepoint(UserId1,UserId2,point)
 	except: # register to Connections
-		UserId1 = Users.objects.get(user_id=UserId1)
-		UserId2 = Users.objects.get(user_id=UserId2)
-		SaveData1= Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=request["status"])
-		SaveData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=request["status"])
-		SaveData1.save()
-		SaveData2.save()
+		saveConnection(hs1,hs2,UserId1,UserId2,status,today,today,point,frequency)
+		savepoint(UserId1,UserId2,point)
 	return HttpResponse(json.dumps(result))
 
 #API:userByPrefecture
@@ -180,7 +199,7 @@ def searchUser(request):
 		prefectureId = request['prefectureId']
 	else:
 		prefectureId = ''
-	
+
 	rows = Users.objects.filter(user_id__icontains=userIdKey, user_name__icontains=userNameKey, prefecture_id__icontains=prefectureId)
 	users = [{"userId":row.user_id, "userName":row.user_name, "prefectureId": row.prefecture_id, "point": row.point} for row in rows]
 	response = {"users": users}
@@ -223,7 +242,7 @@ def searchConnection(request):
 		rows = Connections.objects.filter(user_id1__user_id__iexact=userId1Key, point__gt=pointGreaterThan, point__lt = pointLessThan)
 	if(userId1Key == '' and userId2Key == ''):
 		rows = Connections.objects.filter(point__gt=pointGreaterThan, point__lt = pointLessThan)
-	
+
 	connections = [{"connectionId": row.connection_id, "userId1":row.user_id1.user_id, "userId2":row.user_id2.user_id, "createdBy": str(row.created_by), "updatedBy": str(row.updated_by), "point": row.point} for row in rows]
 	response = {"connections": connections}
 	return HttpResponse(json.dumps(response))
@@ -246,15 +265,39 @@ def connectionMileage(request,status,frequency,distance):
 		statusPt = 5
 	if frequency == 0:
 		firstBonusPt = 5
-	elif frequency >= 5:
+	elif frequency > 5:
 		frequency *= 2
 	distance = int(distance/2)
-	if distance > 15:
+	if distance > 11:
 		distancePt = 3
-	elif distance > 10:
+	elif distance > 7:
 		distancePt = 2
-	elif distance > 5:
+	elif distance > 3:
 		distancePt = 1
 	point = basePt + statusPt + frequencyPt + firstBonusPt + distancePt
-	
 	return(point)
+
+def saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency):
+	UserId1 = Users.objects.get(user_id=UserId1)
+	UserId2 = Users.objects.get(user_id=UserId2)
+	SaveConnectionData1 = Connections(connection_id=hs1, user_id1=UserId1, user_id2=UserId2, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
+	SaveConnectionData2 = Connections(connection_id=hs2, user_id1=UserId2, user_id2=UserId1, status=status, point=point, times=frequency + 1, created_by=createDay, updated_by=today)
+	SaveConnectionData1.save()
+	SaveConnectionData2.save()
+	return()
+
+def savepoint(UserId1,UserId2,point):
+	User1 = Users.objects.get(user_id=UserId1)
+	User2 = Users.objects.get(user_id=UserId2)
+	SaveUserPt1 = Users(user_id=UserId1, user_name=User1.user_name, prefecture_id=User1.prefecture_id, point=User1.point + point)
+	SaveUserPt2 = Users(user_id=UserId2, user_name=User2.user_name, prefecture_id=User2.prefecture_id, point=User2.point + point)
+	SaveUserPt1.save()
+	SaveUserPt2.save()
+	return()
+
+def ranking(request):
+	UPPER_SLICE = 10
+	table = Users.objects.exclude(point=0)
+	users = [{"userId":user.user_id, "userName":user.user_name, "prefectureId": user.prefecture_id, "point": user.point} for user in table]
+	ranking = sorted(users, key=lambda x:x['point'], reverse=True)
+	return HttpResponse(json.dumps({"ranking":ranking[:UPPER_SLICE]}, ensure_ascii=False))
