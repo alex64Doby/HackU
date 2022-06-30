@@ -1,5 +1,6 @@
 from dis import dis
 from time import time
+from urllib import response
 from venv import create
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -94,7 +95,8 @@ def connection(request):
 	User2 = Users.objects.get(pk=UserId2)
 	# connectionMileageテスト用データ(サーバーからデータを取得する処理を実装する)
 	frequency = 0
-	today = datetime.datetime.now()
+	DIFF_JST_FROM_UTC = 9
+	today = datetime.datetime.now() + datetime.timedelta(hours=DIFF_JST_FROM_UTC)
 	distance = abs(User1.prefecture_id - User2.prefecture_id)
 	try:
 		frequency = Connections.objects.get(pk=hs1).times
