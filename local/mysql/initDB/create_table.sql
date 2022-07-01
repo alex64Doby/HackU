@@ -33,6 +33,6 @@
      `times` INT DEFAULT 1,
      `created_by` DATETIME DEFAULT CURRENT_TIMESTAMP,
      `updated_by` DATETIME DEFAULT CURRENT_TIMESTAMP,
-     PRIMARY KEY (`connection_id`),
+    --  PRIMARY KEY (`connection_id`),
      FOREIGN KEY (`user_id1`) REFERENCES Users(`user_id`),
      FOREIGN KEY (`user_id2`) REFERENCES Users(`user_id`));
