@@ -7,7 +7,7 @@ from django.http import HttpResponse
 import json
 import hashlib
 import datetime
-from conda import CondaError
+#from conda import CondaError
 from numpy import integer, polymul
 
 from sqlalchemy import false
