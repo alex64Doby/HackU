@@ -9,6 +9,7 @@
 - http://localhost:8000/api/searchUserByUserIdExactly
 - http://locahost:8000/api/searchConnection
 - http://locahost:8000/api/ranking
+- http://locahost:8000/api/log
 
 ## API一覧
 説明|メゾット|エンドポイント
@@ -22,6 +23,7 @@
 ユーザの検索 | POST | /searchUser
 つながりの検索　| POST | /searchConnection
 ランキング表示 | GET |/ranking
+ログ表示 | POST | /log
 
 ## 各APIの仕様
 

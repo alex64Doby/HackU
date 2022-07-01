@@ -115,25 +115,29 @@ def connection(request):
 		"point":point,
 		"freq":frequency,
 	}
-	createTime = today
 	try:
 		# frequency != 0: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
 		point = Connections.objects.get(connection_id=hs1).point + point
 		createDay = Connections.objects.get(connection_id=hs1).created_by
-		createTime = createDay
 		saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency)
 		savepoint(UserId1,UserId2,point)
 	except: # register to Connections
 		saveConnection(hs1,hs2,UserId1,UserId2,status,today,today,point,frequency)
 		savepoint(UserId1,UserId2,point)
 
+
+	rows = Connections.objects.filter(user_id1=UserId1, user_id2=UserId2)
+	timeList = []
+	for row in rows:
+		timeList.append(row.created_by)
+	log_createTime = min(timeList)
 	logHash1 = UserId1 + UserId2 + str(today)
 	logHash2 = UserId2 + UserId1 + str(today)
 	log_hs1 = str(hashlib.md5(logHash1.encode()).hexdigest())
 	log_hs2 = str(hashlib.md5(logHash2.encode()).hexdigest())
-	Logs.objects.create(connection_id=log_hs1, user_id1=User1, user_id2=User2, status=status, point=log_point, times=0, created_by=createTime, updated_by=today)
-	Logs.objects.create(connection_id=log_hs2, user_id1=User2, user_id2=User1, status=status, point=log_point, times=0, created_by=createTime, updated_by=today)
+	Logs.objects.create(connection_id=log_hs1, user_id1=User1, user_id2=User2, status=status, point=log_point, times=0, created_by=log_createTime, updated_by=today)
+	Logs.objects.create(connection_id=log_hs2, user_id1=User2, user_id2=User1, status=status, point=log_point, times=0, created_by=log_createTime, updated_by=today)
 	return HttpResponse(json.dumps(result))
 
 #API:userByPrefecture
