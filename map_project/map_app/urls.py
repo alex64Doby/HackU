@@ -13,4 +13,5 @@ urlpatterns = [
 	path('searchUserByUserIdExactly', views.searchUserByUserIdExactly, name = 'searchUserByUserIdExactly'),
 	path('searchConnection', views.searchConnection, name = 'searchConnection'),
 	path('ranking', views.ranking, name = 'ranking'),
+	path('log', views.log, name = 'log'),
 ]

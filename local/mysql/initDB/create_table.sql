@@ -23,3 +23,16 @@
      PRIMARY KEY (`connection_id`),
      FOREIGN KEY (`user_id1`) REFERENCES Users(`user_id`),
      FOREIGN KEY (`user_id2`) REFERENCES Users(`user_id`));
+
+ CREATE TABLE IF NOT EXISTS `DB`.`Logs`(
+     `connection_id` CHAR(48) NOT NULL,
+     `user_id1` CHAR(48) NOT NULL,
+     `user_id2` CHAR(48) NOT NULL,
+     `status` CHAR(48) NOT NULL,
+     `point` INT,
+     `times` INT DEFAULT 1,
+     `created_by` DATETIME DEFAULT CURRENT_TIMESTAMP,
+     `updated_by` DATETIME DEFAULT CURRENT_TIMESTAMP,
+     PRIMARY KEY (`connection_id`),
+     FOREIGN KEY (`user_id1`) REFERENCES Users(`user_id`),
+     FOREIGN KEY (`user_id2`) REFERENCES Users(`user_id`));

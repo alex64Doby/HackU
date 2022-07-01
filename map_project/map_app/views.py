@@ -15,7 +15,7 @@ from more_itertools import first
 from requests import request
 from sympy import re
 # Create your views here.
-from .models import Users, Connections
+from .models import Users, Connections, Logs
 
 #API:all
 
@@ -104,6 +104,7 @@ def connection(request):
 	except:
 		frequency = 0
 	point = connectionMileage(request,status,frequency,distance)
+	log_point = point
 	result = {
 		"hash1":hs1,
 		"hash2":hs2,
@@ -114,16 +115,25 @@ def connection(request):
 		"point":point,
 		"freq":frequency,
 	}
+	createTime = today
 	try:
 		# frequency != 0: # if exist connection_id
 		Connections.objects.get(connection_id=hs1)
 		point = Connections.objects.get(connection_id=hs1).point + point
 		createDay = Connections.objects.get(connection_id=hs1).created_by
+		createTime = createDay
 		saveConnection(hs1,hs2,UserId1,UserId2,status,createDay,today,point,frequency)
 		savepoint(UserId1,UserId2,point)
 	except: # register to Connections
 		saveConnection(hs1,hs2,UserId1,UserId2,status,today,today,point,frequency)
 		savepoint(UserId1,UserId2,point)
+
+	logHash1 = UserId1 + UserId2 + str(today)
+	logHash2 = UserId2 + UserId1 + str(today)
+	log_hs1 = str(hashlib.md5(logHash1.encode()).hexdigest())
+	log_hs2 = str(hashlib.md5(logHash2.encode()).hexdigest())
+	Logs.objects.create(connection_id=log_hs1, user_id1=User1, user_id2=User2, status=status, point=log_point, times=0, created_by=createTime, updated_by=today)
+	Logs.objects.create(connection_id=log_hs2, user_id1=User2, user_id2=User1, status=status, point=log_point, times=0, created_by=createTime, updated_by=today)
 	return HttpResponse(json.dumps(result))
 
 #API:userByPrefecture
@@ -304,3 +314,24 @@ def ranking(request):
 	users = [{"userId":user.user_id, "userName":user.user_name, "prefectureId": user.prefecture_id, "point": user.point} for user in table]
 	ranking = sorted(users, key=lambda x:x['point'], reverse=True)
 	return HttpResponse(json.dumps({"ranking":ranking[:UPPER_SLICE]}, ensure_ascii=False))
+
+def log(request):
+	req = json.loads(request.body)
+	offline_log = [[] for i in range(47)]
+	online_log = [[] for i in range(47)]
+	rows = Logs.objects.filter(user_id1=req['userId'])
+	for row in rows:
+		userId2 = row.user_id2.user_id
+		userName = row.user_id2.user_name
+		prefectureId = row.user_id2.prefecture_id
+		createdBy = str(row.created_by)#DATETIME -> str
+		updatedBy = str(row.updated_by)#DATETIME -> str
+		point = row.point
+
+		if(row.status == "offline"):
+			offline_log[prefectureId].append({"userId": userId2, "userName": userName, "createdBy": createdBy, "updatedBy": updatedBy, "point": point})
+
+		if(row.status == "online"):
+			online_log[prefectureId].append({"userId": userId2, "userName": userName, "createdBy": createdBy, "updatedBy": updatedBy, "point": point})
+	response = {"offline_log":offline_log, "online_log":online_log}
+	return HttpResponse(json.dumps(response, ensure_ascii=False))

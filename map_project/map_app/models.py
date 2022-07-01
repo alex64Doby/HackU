@@ -1,6 +1,21 @@
 from django.db import models
 from sqlalchemy import false
 
+class Logs(models.Model):
+    connection_id = models.CharField(primary_key=True, max_length=48)
+    user_id1 = models.ForeignKey('Users', models.DO_NOTHING, db_column='user_id1', related_name = 'log_user_id1')
+    user_id2 = models.ForeignKey('Users', models.DO_NOTHING, db_column='user_id2', related_name = 'log_user_id2')
+    status = models.CharField(max_length=48)
+    point = models.IntegerField(blank=True, null=True)
+    times = models.IntegerField(default=1)
+    created_by = models.DateTimeField(blank=True, null=True)
+    updated_by = models.DateTimeField(blank=True, null=True)
+
+
+    class Meta:
+        managed = False
+        db_table = 'Logs'
+
 class Connections(models.Model):
     connection_id = models.CharField(primary_key=True, max_length=48)
     user_id1 = models.ForeignKey('Users', models.DO_NOTHING, db_column='user_id1', related_name = 'user_id1')
