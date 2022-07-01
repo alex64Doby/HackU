@@ -61,12 +61,13 @@ def all(request):
 #API:signup
 def signup(request):
 	req = json.loads(request.body)
+	point = 0
 	try:	# if exist same id
 		Users.objects.get(user_id=req['userId'])
 		result = {'status': 400}
 	except:	# create new user
 		Users.objects.create(user_id=req['userId'],
-			user_name=req['userName'], prefecture_id=req['prefectureId'])
+			user_name=req['userName'], prefecture_id=req['prefectureId'], point = point)
 		result = {'status': 200}
 	return HttpResponse(json.dumps(result))
 

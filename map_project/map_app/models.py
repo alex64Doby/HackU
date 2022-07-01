@@ -1,4 +1,5 @@
 from django.db import models
+from sqlalchemy import false
 
 class Connections(models.Model):
     connection_id = models.CharField(primary_key=True, max_length=48)
@@ -29,7 +30,7 @@ class Users(models.Model):
     user_id = models.CharField(primary_key=True, max_length=48)
     user_name = models.CharField(max_length=16)
     prefecture_id = models.IntegerField()
-    point = models.IntegerField(blank=True, null=True)
+    point = models.IntegerField(blank=True, null=false ,default=0)
 
     class Meta:
         managed = False
